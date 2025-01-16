@@ -64,7 +64,7 @@ const fetcher = (url: string) =>
     }),
   }).then((res) => res.json());
 
-const DataTable: React.FC = () => {
+const StockRankTable: React.FC = () => {
   const [columns, setColumns] = useState<TableColumnsType<AnyObject>>([]);
   const [tableData, setTableData] = useState<
     { [key: string]: string | number }[]
@@ -150,4 +150,4 @@ const DataTable: React.FC = () => {
   );
 };
 
-export default DataTable;
+export default StockRankTable;

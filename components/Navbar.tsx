@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { signOut } from "@/lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useThemeStore } from "@/lib/store/theme";
@@ -9,7 +8,6 @@ import { Layout, Menu, Button } from "antd";
 import type { ItemType, MenuItemType } from "antd/es/menu/interface";
 import { Typography } from "antd";
 import { LogOut } from "lucide-react";
-import { redirect } from "next/navigation";
 const { Text } = Typography;
 const { Header } = Layout;
 
@@ -31,8 +29,18 @@ const menuItemsLtr: ItemType<MenuItemType>[] = [
     key: "3",
   },
   {
-    label: <Link href="/services/manual">Subscribe</Link>,
+    label: <Link href="/services/manual">Services</Link>,
     key: "4",
+    children: [
+      {
+        label: <Link href="/services/manual">Manual</Link>,
+        key: "4-1",
+      },
+      {
+        label: <Link href="/services/portfolio">Portfolio</Link>,
+        key: "4-2",
+      },
+    ],
   },
 ];
 
@@ -40,10 +48,7 @@ const menuItemsRtl: ItemType<MenuItemType>[] = [
   {
     label: (
       <Button
-        onClick={async () => {
-          await signOut();
-          return redirect("/");
-        }}
+        onClick={async () => {}}
         type="text"
         icon={<LogOut size={16} />}
       />

@@ -66,7 +66,7 @@ const columns = [
   },
 ];
 
-const InvestmentDashboard = () => {
+const PortfolioView = () => {
   return (
     <div className="p-4 sm:p-6">
       <Title level={2} className="mb-4 sm:mb-6 text-lg sm:text-xl">
@@ -159,4 +159,4 @@ const InvestmentDashboard = () => {
   );
 };
 
-export default InvestmentDashboard;
+export default PortfolioView;

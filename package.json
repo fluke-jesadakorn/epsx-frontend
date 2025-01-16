@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "dev:worker": "wrangler pages dev --port 3000",
+    "dev:worker": "nodemon --exec 'wrangler pages dev --port 3000' --watch ./app --watch ./components --watch ./lib --watch ./public --watch ./utils --watch ./types --watch ./views --ext ts,tsx",
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "bun run pages:build && wrangler pages dev --port 3000",
     "deploy": "bun run pages:build && wrangler pages deploy"

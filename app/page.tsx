@@ -1,4 +1,5 @@
-import HomeTable from "@/components/HomeTable";
+// Test hot reload
+import StockRankTable from "@/components/StockRankTable";
 import HomeView from "@/views/HomeView";
 import { Col, Row } from "antd";
 
@@ -7,10 +8,10 @@ export default function Home() {
     <Row style={{ padding: "0 20px" }} justify={"center"}>
       <Col>
         <HomeView />
-        <HomeTable />
+        <StockRankTable />
       </Col>
     </Row>
   );
 }
 
-export const runtime = 'edge';
+export const runtime = "edge";
