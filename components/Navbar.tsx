@@ -2,12 +2,14 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { useThemeStore } from "@/lib/store/theme";
 import { Layout, Menu, Button } from "antd";
 import type { ItemType, MenuItemType } from "antd/es/menu/interface";
 import { Typography } from "antd";
 import { LogOut } from "lucide-react";
+import { signOut } from "@/utils/auth";
+
 const { Text } = Typography;
 const { Header } = Layout;
 
@@ -21,15 +23,15 @@ const menuItemsLtr: ItemType<MenuItemType>[] = [
     key: "1",
   },
   {
-    label: <Link href="/portfolio/assets/ranking">Rankings</Link>,
+    label: <Link href="/ranking">Rankings</Link>,
     key: "2",
   },
   {
-    label: <Link href="/portfolio/management">Portfolio</Link>,
+    label: <Link href="/portfolio">Portfolio</Link>,
     key: "3",
   },
   {
-    label: <Link href="/services/manual">Services</Link>,
+    label: <Link href="/services">Services</Link>,
     key: "4",
     children: [
       {
@@ -37,7 +39,7 @@ const menuItemsLtr: ItemType<MenuItemType>[] = [
         key: "4-1",
       },
       {
-        label: <Link href="/services/portfolio">Portfolio</Link>,
+        label: <Link href="/portfolio">Portfolio</Link>,
         key: "4-2",
       },
     ],
@@ -48,7 +50,10 @@ const menuItemsRtl: ItemType<MenuItemType>[] = [
   {
     label: (
       <Button
-        onClick={async () => {}}
+        onClick={async () => {
+          const isSignedOut = await signOut();
+          if (isSignedOut) redirect("/");
+        }}
         type="text"
         icon={<LogOut size={16} />}
       />
@@ -68,9 +73,9 @@ export default function Navbar() {
   // Add new routes here when adding new menu items
   const routeToKeyMap: { [key: string]: string } = {
     "/": "1",
-    "/portfolio/assets/ranking": "2",
-    "/portfolio/management": "3",
-    "/services/manual": "4",
+    "/ranking": "2",
+    "/portfolio": "3",
+    "/services": "4",
   };
 
   // Get current key based on route
@@ -112,3 +117,5 @@ export default function Navbar() {
     </Header>
   );
 }
+
+export const runtime = "edge";

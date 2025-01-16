@@ -9,7 +9,6 @@ import { cookies } from "next/headers";
 import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export async function createServerClient(cookieStore?: ReadonlyRequestCookies) {
-
   const store = cookieStore || (await cookies());
   return Create(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

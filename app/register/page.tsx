@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthForm } from "@/components/AuthForm";
-import { signInWithOAuth, signUpWithEmailPassword } from "@/lib/auth";
+import { signInWithOAuth, signUpWithEmailPassword } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Suspense } from "react";
