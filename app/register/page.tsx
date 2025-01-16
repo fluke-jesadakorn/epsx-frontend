@@ -77,7 +77,7 @@ const SuspendedRegisterPage = () => (
 );
 
 export default SuspendedRegisterPage;
-
+export const runtime = 'edge';
 // TODO: Implement email/password registration
 // TODO: Add email verification flow
 // TODO: Implement password recovery

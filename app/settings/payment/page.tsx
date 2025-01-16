@@ -7,3 +7,4 @@ const PaymentSettings = () => {
 };
 
 export default PaymentSettings;
+export const runtime = 'edge';

@@ -157,3 +157,4 @@ const ForgotPasswordPage = () => {
 };
 
 export default ForgotPasswordPage;
+export const runtime = 'edge';

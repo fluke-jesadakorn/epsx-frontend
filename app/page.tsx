@@ -12,3 +12,5 @@ export default function Home() {
     </Row>
   );
 }
+
+export const runtime = 'edge';

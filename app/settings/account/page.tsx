@@ -7,3 +7,4 @@ const AccountSettings = () => {
 };
 
 export default AccountSettings;
+export const runtime = 'edge';

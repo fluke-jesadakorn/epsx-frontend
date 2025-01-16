@@ -27,3 +27,5 @@ export default function ConfirmationPending() {
     </Card>
   );
 }
+
+export const runtime = 'edge';

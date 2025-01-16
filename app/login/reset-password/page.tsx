@@ -175,3 +175,4 @@ const ResetPasswordPage = () => {
 };
 
 export default ResetPasswordPage;
+export const runtime = 'edge';

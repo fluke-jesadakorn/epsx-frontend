@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "dev:worker": "wrangler pages dev --port 3000",
     "pages:build": "npx @cloudflare/next-on-pages",
-    "preview": "bun run pages:build && wrangler pages dev",
+    "preview": "bun run pages:build && wrangler pages dev --port 3000",
     "deploy": "bun run pages:build && wrangler pages deploy"
   },
   "dependencies": {

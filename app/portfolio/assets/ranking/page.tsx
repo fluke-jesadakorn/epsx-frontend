@@ -5,3 +5,4 @@ export default function Ranking() {
     </div>
   );
 }
+export const runtime = 'edge';

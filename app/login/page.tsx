@@ -84,3 +84,4 @@ export default LoginPageWithSuspense;
 // TODO: Implement email/password authentication
 // TODO: Add session management
 // TODO: Implement forgot password flow
+export const runtime = 'edge';
