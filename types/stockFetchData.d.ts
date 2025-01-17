@@ -1,10 +1,10 @@
 export interface Response {
-  columns?: Column[];
-  rows?: Row[];
-  total?: number;
+  columns: Column[];
+  rows: Row[];
+  page: Page;
 }
 
-export type Column = {
+type Column = {
   metric: string;
   label: string;
   description: string;
@@ -12,7 +12,7 @@ export type Column = {
   sortable: boolean;
 };
 
-export type Row = {
+type Row = {
   asset: Asset;
   data: RowData[];
 };

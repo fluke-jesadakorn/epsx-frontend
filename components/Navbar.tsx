@@ -3,71 +3,92 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
-import { useThemeStore } from "@/lib/store/theme";
+import { useThemeStore, ThemeType } from "@/lib/store/theme";
 import { Layout, Menu, Button } from "antd";
 import type { ItemType, MenuItemType } from "antd/es/menu/interface";
 import { Typography } from "antd";
-import { LogOut } from "lucide-react";
+import { LogOut, Moon, Sun } from "lucide-react";
 import { signOut } from "@/utils/auth";
 
 const { Text } = Typography;
 const { Header } = Layout;
 
-const menuItemsLtr: ItemType<MenuItemType>[] = [
-  {
-    label: <Text style={{ cursor: "default" }}>EPSx.ai</Text>,
-    key: "0",
-  },
-  {
-    label: <Link href="/">Home</Link>,
-    key: "1",
-  },
-  {
-    label: <Link href="/ranking">Rankings</Link>,
-    key: "2",
-  },
-  {
-    label: <Link href="/portfolio">Portfolio</Link>,
-    key: "3",
-  },
-  {
-    label: <Link href="/services">Services</Link>,
-    key: "4",
-    children: [
-      {
-        label: <Link href="/services/manual">Manual</Link>,
-        key: "4-1",
-      },
-      {
-        label: <Link href="/portfolio">Portfolio</Link>,
-        key: "4-2",
-      },
-    ],
-  },
-];
-
-const menuItemsRtl: ItemType<MenuItemType>[] = [
-  {
-    label: (
-      <Button
-        onClick={async () => {
-          const isSignedOut = await signOut();
-          if (isSignedOut) redirect("/");
-        }}
-        type="text"
-        icon={<LogOut size={16} />}
-      />
-    ),
-    key: "1",
-  },
-];
 // TODO: Add authentication state handling for dynamic menu items
 // TODO: Add active link styling based on current route
 
 export default function Navbar() {
   const pathname = usePathname();
   const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
   const initializeTheme = useThemeStore((state) => state.initializeTheme);
+
+  const menuItemsLtr: ItemType<MenuItemType>[] = [
+    {
+      label: <Text style={{ cursor: "default" }}>EPSx.ai</Text>,
+      key: "0",
+    },
+    {
+      label: <Link href="/">Home</Link>,
+      key: "1",
+    },
+    {
+      label: <Link href="/ranking">Rankings</Link>,
+      key: "2",
+    },
+    {
+      label: <Link href="/portfolio">Portfolio</Link>,
+      key: "3",
+    },
+    {
+      label: <Link href="/services">Services</Link>,
+      key: "4",
+      children: [
+        {
+          label: <Link href="/services/manual">Manual</Link>,
+          key: "4-1",
+        },
+        {
+          label: <Link href="/portfolio">Portfolio</Link>,
+          key: "4-2",
+        },
+      ],
+    },
+  ];
+
+  const menuItemsRtl: ItemType<MenuItemType>[] = [
+    {
+      label: (
+        <Button
+          onClick={() => {
+            const newTheme = theme === ThemeType.lightTheme 
+              ? ThemeType.darkTheme 
+              : ThemeType.lightTheme;
+            setTheme(newTheme);
+          }}
+          type="text"
+          icon={theme === ThemeType.lightTheme ? (
+            <Moon size={16} />
+          ) : (
+            <Sun size={16} />
+          )}
+        />
+      ),
+      key: "0",
+    },
+    {
+      label: (
+        <Button
+          onClick={async () => {
+            const isSignedOut = await signOut();
+            if (isSignedOut) redirect("/");
+          }}
+          type="text"
+          icon={<LogOut size={16} />}
+        />
+      ),
+      key: "1",
+    },
+  ];
 
   // Map routes to menu item keys
   // Add new routes here when adding new menu items

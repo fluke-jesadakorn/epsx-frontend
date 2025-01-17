@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - News and terms pages
 - Settings pages for account, payment, and web3 configurations
 
+## [1.1.0] - 2024-06-15
+### Added
+- Server-side pagination support for StockRankTable
+- Total items count in API response
+- Async data fetching for pagination
+
 ## [Unreleased]
 ### Added
 - Changelog and version control documentation
@@ -21,10 +27,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Portfolio ranking system
 - Web3 settings integration
 - Manual service documentation
+- Stock ranking table pagination and sorting
+- Enhanced data fetching with caching
+- Responsive navbar with dynamic menu
+- Home view card section improvements
 
 ### Changed
 - Improved authentication form validation
 - Enhanced portfolio management UI
+- Optimized data fetching in StockRankTable
+- Refactored navbar component structure
 
 ### Future Features
 - [ ] Add dark/light theme toggle functionality
