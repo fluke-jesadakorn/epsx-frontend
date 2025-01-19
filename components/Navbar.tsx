@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import { useThemeStore, ThemeType } from "@/lib/store/theme";
-import { Layout, Menu, Button } from "antd";
+import { Layout, Menu, Button, Switch, Row } from "antd";
 import type { ItemType, MenuItemType } from "antd/es/menu/interface";
 import { Typography } from "antd";
 import { LogOut, Moon, Sun } from "lucide-react";
@@ -58,19 +58,21 @@ export default function Navbar() {
   const menuItemsRtl: ItemType<MenuItemType>[] = [
     {
       label: (
-        <Button
-          onClick={() => {
-            const newTheme = theme === ThemeType.lightTheme 
-              ? ThemeType.darkTheme 
-              : ThemeType.lightTheme;
-            setTheme(newTheme);
+        <Switch
+          checked={theme === ThemeType.darkTheme}
+          onChange={(checked) => {
+            setTheme(checked ? ThemeType.darkTheme : ThemeType.lightTheme);
           }}
-          type="text"
-          icon={theme === ThemeType.lightTheme ? (
-            <Moon size={16} />
-          ) : (
-            <Sun size={16} />
-          )}
+          checkedChildren={
+            <Row align={"middle"} style={{ paddingTop: 3 }}>
+              <Moon size={16} />
+            </Row>
+          }
+          unCheckedChildren={
+            <Row align={"middle"} style={{ paddingTop: 3 }}>
+              <Sun size={16} />
+            </Row>
+          }
         />
       ),
       key: "0",
