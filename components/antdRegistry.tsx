@@ -48,7 +48,7 @@ const AntdRegistryProvider: React.FC<AntdRegistryProps> = ({ children }) => {
           <Content>{children}</Content>
           <Footer>
             <Row justify={"center"} align={"middle"}>
-              EPSx.ai ©2025 Powered by Next.js and Ant Design
+              EPSx ©2025 Powered by Next.js and Ant Design
             </Row>
           </Footer>
         </Layout>

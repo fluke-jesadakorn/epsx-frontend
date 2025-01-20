@@ -13,7 +13,7 @@ const HomeView = () => {
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={1} style={{ marginBottom: 16 }}>
             Discover the World of Stocks
-            <span style={{ color: "#1677FF" }}> with EPSx.ai</span>
+            <span style={{ color: "#1677FF" }}> with EPSx</span>
           </Title>
           <Paragraph style={{ fontSize: 18 }}>
             Track EPS growth rankings, manage your portfolio, and unlock deeper

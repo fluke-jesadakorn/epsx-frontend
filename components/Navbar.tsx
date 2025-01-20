@@ -24,7 +24,7 @@ export default function Navbar() {
 
   const menuItemsLtr: ItemType<MenuItemType>[] = [
     {
-      label: <Text style={{ cursor: "default" }}>EPSx.ai</Text>,
+      label: <Text style={{ cursor: "default" }}>EPSx</Text>,
       key: "0",
     },
     {
