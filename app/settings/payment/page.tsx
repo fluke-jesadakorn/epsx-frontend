@@ -60,6 +60,7 @@ const PaymentForm = () => {
       router.refresh();
       alert("Payment successful!");
     } catch (err) {
+      console.error(err)
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
