@@ -12,6 +12,12 @@ const publicRoutes = [
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.pathname;
+  
+  // Redirect all routes to coming soon page in development mode
+  if (process.env.NODE_ENV === 'development' && !url.startsWith('/coming-soon')) {
+    return NextResponse.redirect(new URL('/coming-soon', req.url));
+  }
+
   const supabase = await createServerClient();
 
   try {
