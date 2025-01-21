@@ -8,14 +8,23 @@ const publicRoutes = [
   "/confirmation-pending",
   "/forgot-password",
   "/reset-password",
+  "/coming-soon",
 ];
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.pathname;
-  
-  // Redirect all routes to coming soon page in development mode
-  if (process.env.NODE_ENV === 'development' && !url.startsWith('/coming-soon')) {
-    return NextResponse.redirect(new URL('/coming-soon', req.url));
+
+  // Redirect only main application routes to coming soon page in development mode
+  if (
+    process.env.NODE_ENV === "development" &&
+    !url.startsWith("/_next") &&
+    !url.startsWith("/static") &&
+    !url.startsWith("/api") &&
+    !url.startsWith("/coming-soon") &&
+    url !== "/coming-soon" &&
+    url !== "/favicon.ico"
+  ) {
+    return NextResponse.rewrite(new URL("/coming-soon", req.url));
   }
 
   const supabase = await createServerClient();

@@ -1,5 +1,5 @@
 "use client";
-import { Layout, Typography, Button, Row, Col, Flex } from "antd";
+import { Layout, Typography, Button, Flex } from "antd";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -20,7 +20,7 @@ export default function ComingSoonPage() {
           </Title>
           
           <Text className="text-white text-lg">
-            We're working on something awesome!
+            We&apos;re working on something awesome!
           </Text>
 
           <Button type="primary" size="large">
