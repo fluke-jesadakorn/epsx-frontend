@@ -25,6 +25,7 @@ const darkTheme: ThemeConfig = {
     colorPrimary: "#1fc7d4",
     colorInfo: "#1fc7d4",
     colorBgBase: "#27262c",
+    colorTextBase: "#ffffff",
   },
   components: {
     Button: {

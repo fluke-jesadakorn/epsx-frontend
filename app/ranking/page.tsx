@@ -1,4 +1,4 @@
-import RankingView from "@/views/RankingView";
+import RankingView from "@/components/StockRankTable";
 
 export default function Ranking() {
   return <RankingView />;

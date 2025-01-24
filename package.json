@@ -21,7 +21,6 @@
     "@stripe/stripe-js": "^5.5.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.0",
-    "@types/next": "^9.0.0",
     "antd": "^5.23.2",
     "lucide-react": "^0.474.0",
     "next": "15.1.6",
@@ -43,6 +42,7 @@
     "eslint": "^9.18.0",
     "eslint-config-next": "15.1.6",
     "eslint-plugin-next-on-pages": "^1.13.7",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "wrangler": "^3.105.0"
   }
 }

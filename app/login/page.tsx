@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthForm } from "@/components/AuthForm";
+import { AuthForm } from "@/components/auth/AuthForm";
 import { signInWithOAuth, signInWithEmailPassword } from "@/utils/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";

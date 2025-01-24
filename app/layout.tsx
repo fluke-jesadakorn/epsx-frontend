@@ -3,18 +3,20 @@ import { SWRProvider } from "@/lib/fetchData";
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import { ErrorProvider } from "@/contexts/ErrorContext";
 import { Geist, Geist_Mono } from "next/font/google";
-import AntdRegistryProvider from "@/components/AntdRegistry";
+import AntdRegistryProvider from "@/components/layout/AntdRegistry";
 import type { Metadata } from "next";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -40,7 +42,8 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.className} ${geistMono.className}`}
     >
-      <body>
+      <body style={{ minHeight: "100vh" }}>
+        {/* TODO: Consider adding a loading skeleton for initial render */}
         <AntdRegistryProvider>
           <LoadingProvider>
             <ErrorProvider>

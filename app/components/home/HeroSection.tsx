@@ -1,14 +1,19 @@
 "use client";
 
 import React from "react";
-import { Row, Typography, theme } from "antd";
+import { Row, Typography } from "antd";
+import type { CSSProperties } from "react";
 
 const { Title, Paragraph } = Typography;
 
-const HomeView = () => {
+interface CardSectionProps {
+  style?: CSSProperties;
+}
+
+const CardSection: React.FC<CardSectionProps> = ({ style }) => {
   return (
     <Row
-      style={{ height: "30vh", width: "100%" }}
+      style={{ height: "30vh", width: "100%", ...style }}
       align="middle"
       justify="center"
     >
@@ -26,4 +31,4 @@ const HomeView = () => {
   );
 };
 
-export default HomeView;
+export default CardSection;

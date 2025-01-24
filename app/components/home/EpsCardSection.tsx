@@ -1,5 +1,10 @@
 import React from "react";
 import { Card, Row, Col, Typography, Flex } from "antd";
+import type { CSSProperties } from "react";
+
+interface EpsCardSectionProps {
+  style?: CSSProperties;
+}
 import useSWR from "swr";
 import type { Response } from "@/types/stockFetchData";
 import { fetcher } from "@/lib/fetchData";
@@ -7,27 +12,15 @@ import Image from "next/image";
 const { Title, Text } = Typography;
 
 const url = "https://www.investing.com/pro/_/screener-v2/query";
-const EPSGrowthCards = () => {
-  const { data, error } = useSWR<Response, Error>(url, () =>
+const EpsCardSection: React.FC<EpsCardSectionProps> = ({ style }) => {
+  const { data } = useSWR<Response, Error>(url, () =>
     fetcher({
       url,
     })
   );
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  if (!data) {
-    return <div>Loading...</div>;
-  }
-
-  if (!data.columns || !data.rows) {
-    return <div>Data not found</div>;
-  }
-
   return (
-    <Row gutter={[16, 16]} style={{ width: "100%" }}>
+    <Row gutter={[16, 16]} style={{ width: "100%", ...style }}>
       {data?.rows.slice(0, 3).map((item, index) => (
         <Col key={index} xs={24} sm={24} md={8} lg={8} xl={8}>
           <Card
@@ -56,4 +49,4 @@ const EPSGrowthCards = () => {
   );
 };
 
-export default EPSGrowthCards;
+export default EpsCardSection;

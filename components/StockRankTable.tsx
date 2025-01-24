@@ -1,18 +1,23 @@
 "use client";
 
-import { createTableColumns, createTableData } from "@/utils/tableUtils";
+import { createTableColumns, createTableData } from "@/utils/table/tableUtils";
 import type { Response } from "@/types/stockFetchData";
 import { AnyObject } from "antd/es/_util/type";
 import { Table, Alert, Row, Skeleton } from "antd";
-// TODO: Consider adding skeleton loading states for table cells
-// TODO: Implement progressive loading for large datasets
-// TODO: Add loading animations for column sorting
 import type { TableColumnsType } from "antd";
 import { fetcher } from "@/lib/fetchData";
 import React, { useState } from "react";
-import useSWR, { preload, mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
-const StockRankTable: React.FC = () => {
+interface StockRankTableProps {
+  style?: React.CSSProperties;
+  role?: "public" | "free" | "admin";
+}
+
+const StockRankTable: React.FC<StockRankTableProps> = ({
+  style,
+  role = "public",
+}) => {
   const [columns, setColumns] = useState<TableColumnsType<AnyObject>>([]);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +39,9 @@ const StockRankTable: React.FC = () => {
         if (response?.columns && response?.rows) {
           setIsPaginationLoading(true);
           const convertedColumns = createTableColumns(response);
-          const convertedRows = createTableData(response);
+          // Convert role string to number (1 = public, 2 = free, 3 = admin)
+          const roleNumber = role === "public" ? 1 : role === "free" ? 2 : 3;
+          const convertedRows = createTableData(response, roleNumber);
           const rowNumberColumn = {
             title: "No.",
             dataIndex: "rowNumber",
@@ -72,18 +79,16 @@ const StockRankTable: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div style={{ 
-        minHeight: 500,
-        width: '100%',
-        background: 'var(--background-color)',
-        borderRadius: 8,
-        padding: 24
-      }}>
-        <Skeleton 
-          active
-          paragraph={{ rows: 10 }}
-          title={false}
-        />
+      <div
+        style={{
+          minHeight: 500,
+          width: "100%",
+          background: "var(--background-color)",
+          borderRadius: 8,
+          padding: 24,
+        }}
+      >
+        <Skeleton active paragraph={{ rows: 10 }} title={false} />
       </div>
     );
   }
@@ -100,24 +105,30 @@ const StockRankTable: React.FC = () => {
   }
 
   return (
-    <Row justify="center" align="middle" style={{ width: "100%" }}>
-      <Table
-        style={{ width: "100%" }}
-        columns={columns}
-        dataSource={tableData}
-        loading={isPaginationLoading}
-        pagination={{
-          pageSize,
-          current: currentPage,
-          total: totalRecords,
-          responsive: true,
-          showSizeChanger: true,
-          pageSizeOptions: [10, 20, 50, 100],
-          onChange: handlePaginationChange,
-        }}
-        scroll={{ x: "max-content" }}
-        size="large"
-      />
+    <Row justify="center" align="middle" style={{ width: "100%", ...style }}>
+      <div className="scroll-container">
+        <Table
+          style={{ width: "100%" }}
+          columns={columns}
+          dataSource={tableData}
+          loading={isPaginationLoading}
+          pagination={{
+            pageSize,
+            current: currentPage,
+            total: totalRecords,
+            responsive: true,
+            showSizeChanger: true,
+            pageSizeOptions: [10, 20, 50, 100],
+            onChange: handlePaginationChange,
+          }}
+          scroll={{
+            x: "max-content",
+            y: 500,
+            scrollToFirstRowOnChange: true,
+          }}
+          size="large"
+        />
+      </div>
     </Row>
   );
 };
@@ -130,3 +141,6 @@ export default StockRankTable;
 // TODO: Add validation for pagination parameters
 // TODO: Implement server-side pagination if performance becomes an issue
 // TODO: Implement persistent user preference storage for page size
+// TODO: Add role-based access logging
+// TODO: Implement role validation
+// TODO: Add role-based UI indicators
