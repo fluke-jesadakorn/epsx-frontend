@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import { ConfigProvider, Row } from "antd";
-import { useThemeStore } from "../lib/store/theme";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { useThemeStore } from "@/lib/store/theme";
 import { Layout } from "antd";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 import { unstableSetRender } from "antd";
 import { createRoot, Root } from "react-dom/client";
 
@@ -48,7 +48,7 @@ const AntdRegistryProvider: React.FC<AntdRegistryProps> = ({ children }) => {
           <Content>{children}</Content>
           <Footer>
             <Row justify={"center"} align={"middle"}>
-              EPSx.ai ©2025 Powered by Next.js and Ant Design
+              EPSx ©2025 Powered by Next.js and Ant Design
             </Row>
           </Footer>
         </Layout>

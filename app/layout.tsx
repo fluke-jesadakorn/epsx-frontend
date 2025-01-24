@@ -1,22 +1,27 @@
 import "@ant-design/v5-patch-for-react-19";
+import { SWRProvider } from "@/lib/fetchData";
+import { LoadingProvider } from "@/contexts/LoadingContext";
+import { ErrorProvider } from "@/contexts/ErrorContext";
 import { Geist, Geist_Mono } from "next/font/google";
-import AntdRegistryProvider from "@/components/antdRegistry";
+import AntdRegistryProvider from "@/components/layout/AntdRegistry";
 import type { Metadata } from "next";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "ESPX.ai",
-  description: "ESPX.ai - Stock Insights and Portfolio Management",
+  title: "ESPx",
+  description: "ESPx - Stock Insights and Portfolio Management",
 };
 
 export const viewport = {
@@ -37,8 +42,15 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.className} ${geistMono.className}`}
     >
-      <body>
-        <AntdRegistryProvider>{children}</AntdRegistryProvider>
+      <body style={{ minHeight: "100vh" }}>
+        {/* TODO: Consider adding a loading skeleton for initial render */}
+        <AntdRegistryProvider>
+          <LoadingProvider>
+            <ErrorProvider>
+              <SWRProvider>{children}</SWRProvider>
+            </ErrorProvider>
+          </LoadingProvider>
+        </AntdRegistryProvider>
       </body>
     </html>
   );

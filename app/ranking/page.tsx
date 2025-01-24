@@ -1,7 +1,7 @@
-import StockRankTable from "@/components/StockRankTable";
+import RankingView from "@/components/StockRankTable";
 
 export default function Ranking() {
-  return <StockRankTable />;
+  return <RankingView />;
 }
 
 export const runtime = "edge";
