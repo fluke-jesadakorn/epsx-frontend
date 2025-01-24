@@ -1,6 +1,7 @@
 "use server";
 
 import { createServerClient } from "@/utils/supabase/server";
+import { defaultRoles } from "@/constants/roles";
 
 export type AuthResponse = {
   success: boolean;
@@ -18,12 +19,16 @@ export async function getSession() {
     return null;
   }
 
-  // Return a plain object with only the necessary session data
+  // Get user's role from default roles
+  const userRoleId = session.user?.user_metadata?.role;
+  const userRole = defaultRoles.find(role => role.id === userRoleId);
+
+  // Return session data with full role information
   return {
     user: {
       id: session.user?.id,
       email: session.user?.email,
-      role: session.user?.role,
+      role: userRole || null,
     },
     access_token: session.access_token,
     refresh_token: session.refresh_token,

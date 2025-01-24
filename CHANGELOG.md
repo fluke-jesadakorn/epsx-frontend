@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Total items count in API response
 - Async data fetching for pagination
 
-## [Unreleased]
+## [0.2.0] - 2025-01-24
 ### Added
 - Changelog and version control documentation
 - Loading states for authentication forms
@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optimized data fetching in StockRankTable
 - Refactored navbar component structure
 
+## [Unreleased]
 ### Future Features
 - [ ] Add dark/light theme toggle functionality
 - [ ] Implement portfolio performance analytics
