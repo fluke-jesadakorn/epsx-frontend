@@ -3,7 +3,10 @@
 import { createTableColumns, createTableData } from "@/utils/tableUtils";
 import type { Response } from "@/types/stockFetchData";
 import { AnyObject } from "antd/es/_util/type";
-import { Table, Spin, Alert, Row } from "antd";
+import { Table, Alert, Row, Skeleton } from "antd";
+// TODO: Consider adding skeleton loading states for table cells
+// TODO: Implement progressive loading for large datasets
+// TODO: Add loading animations for column sorting
 import type { TableColumnsType } from "antd";
 import { fetcher } from "@/lib/fetchData";
 import React, { useState } from "react";
@@ -68,7 +71,21 @@ const StockRankTable: React.FC = () => {
   };
 
   if (isLoading) {
-    return <Spin size="large" />;
+    return (
+      <div style={{ 
+        minHeight: 500,
+        width: '100%',
+        background: 'var(--background-color)',
+        borderRadius: 8,
+        padding: 24
+      }}>
+        <Skeleton 
+          active
+          paragraph={{ rows: 10 }}
+          title={false}
+        />
+      </div>
+    );
   }
 
   if (error || !data?.columns || !data?.rows) {

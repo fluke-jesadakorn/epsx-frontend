@@ -1,5 +1,7 @@
 import "@ant-design/v5-patch-for-react-19";
 import { SWRProvider } from "@/lib/fetchData";
+import { LoadingProvider } from "@/contexts/LoadingContext";
+import { ErrorProvider } from "@/contexts/ErrorContext";
 import { Geist, Geist_Mono } from "next/font/google";
 import AntdRegistryProvider from "@/components/AntdRegistry";
 import type { Metadata } from "next";
@@ -40,7 +42,11 @@ export default function RootLayout({
     >
       <body>
         <AntdRegistryProvider>
-          <SWRProvider>{children}</SWRProvider>
+          <LoadingProvider>
+            <ErrorProvider>
+              <SWRProvider>{children}</SWRProvider>
+            </ErrorProvider>
+          </LoadingProvider>
         </AntdRegistryProvider>
       </body>
     </html>

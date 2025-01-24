@@ -4,7 +4,6 @@ import React from "react";
 import { Row, Typography, theme } from "antd";
 
 const { Title, Paragraph } = Typography;
-const { defaultSeed } = theme;
 
 const HomeView = () => {
   return (

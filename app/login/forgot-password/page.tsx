@@ -12,7 +12,7 @@ import {
   Input,
   Button,
   Alert,
-  Spin,
+  Skeleton,
   Divider,
   Col,
   Row,
@@ -134,7 +134,17 @@ const ForgotPasswordPage = () => {
               size="large"
               block
               loading={loading}
-              icon={loading ? <Spin /> : null}
+              icon={loading ? (
+                <Skeleton.Avatar 
+                  active 
+                  size="small" 
+                  shape="circle" 
+                  style={{ marginRight: 8 }}
+                />
+              ) : null}
+              // TODO: Add skeleton loading for form fields
+              // TODO: Implement progress indicators
+              // TODO: Add loading states for navigation
             >
               Reset Password
             </Button>

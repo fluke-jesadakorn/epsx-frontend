@@ -8,18 +8,22 @@ const { Title, Text } = Typography;
 
 const url = "https://www.investing.com/pro/_/screener-v2/query";
 const EPSGrowthCards = () => {
-  const { data, error, isLoading } = useSWR<Response, Error>(url, () =>
+  const { data, error } = useSWR<Response, Error>(url, () =>
     fetcher({
       url,
     })
   );
 
-  if (isLoading) {
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  if (!data) {
     return <div>Loading...</div>;
   }
 
-  if (error || !data?.columns || !data?.rows) {
-    return <div>Error: {error?.message || "Data not found"}</div>;
+  if (!data.columns || !data.rows) {
+    return <div>Data not found</div>;
   }
 
   return (

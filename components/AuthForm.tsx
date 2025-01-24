@@ -5,7 +5,7 @@ import {
   Input,
   Button,
   Alert,
-  Spin,
+  Skeleton,
   Divider,
   Col,
   Row,
@@ -214,7 +214,17 @@ export const AuthForm = ({
                 size="large"
                 block
                 loading={loading}
-                icon={loading ? <Spin /> : null}
+                icon={loading ? (
+                  <Skeleton.Avatar 
+                    active 
+                    size="small" 
+                    shape="circle" 
+                    style={{ marginRight: 8 }}
+                  />
+                ) : null}
+                // TODO: Add more sophisticated loading states
+                // TODO: Implement skeleton loading for form fields
+                // TODO: Add progress indicators for long operations
               >
                 {type === "login" ? "Sign In" : "Register"}
               </Button>

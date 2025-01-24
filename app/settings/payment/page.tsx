@@ -10,7 +10,10 @@ import {
 } from "@stripe/react-stripe-js";
 import { supabaseClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Button, Form, Typography, Alert, Spin } from "antd";
+import { Button, Form, Typography, Alert, Skeleton } from "antd";
+// TODO: Add skeleton loading for payment form
+// TODO: Implement progress indicators for payment processing
+// TODO: Add loading states for payment history
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -94,7 +97,14 @@ const PaymentForm = () => {
           disabled={!stripe}
           block
         >
-          {loading ? <Spin /> : "Pay"}
+          {loading ? (
+            <Skeleton.Avatar 
+              active 
+              size="small" 
+              shape="circle" 
+              style={{ marginRight: 8 }}
+            />
+          ) : "Pay"}
         </Button>
       </Form.Item>
     </Form>

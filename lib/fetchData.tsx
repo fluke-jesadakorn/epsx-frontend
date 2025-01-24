@@ -33,7 +33,7 @@ const initialQuery: Query = {
   page: { skip: 0, limit: 10 },
 };
 
-export const fetcher = async ({
+export const createFetcher = (setLoading: (loading: boolean) => void) => async ({
   url = "https://www.investing.com/pro/_/screener-v2/query",
   query = initialQuery,
   page = { skip: 0, limit: 10 },
@@ -42,25 +42,39 @@ export const fetcher = async ({
   query?: Query;
   page?: { skip: number; limit: number };
 }) => {
-  const optionsQuery = { ...query, page };
+  try {
+    setLoading(true);
+    const optionsQuery = { ...query, page };
 
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      ...API_HEADERS,
-      "accept-language": "en-US,en;q=0.9",
-      "x-requested-with": "investing-client/0910922",
-    },
-    body: JSON.stringify(optionsQuery),
-  }).then((res) => res.json());
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        ...API_HEADERS,
+        "accept-language": "en-US,en;q=0.9",
+        "x-requested-with": "investing-client/0910922",
+      },
+      body: JSON.stringify(optionsQuery),
+    });
+
+    const data = await response.json();
+    return data;
+  } finally {
+    setLoading(false);
+  }
 };
 
+export const fetcher = createFetcher(() => {});
+
 // SWR Provider for data fetching with caching and revalidation
+import { useLoading } from "@/contexts/LoadingContext";
+
 export const SWRProvider = ({ children }: { children: React.ReactNode }) => {
+  const { setLoading } = useLoading();
+  
   return (
     <SWRConfig
       value={{
-        fetcher,
+        fetcher: createFetcher(setLoading),
         revalidateOnFocus: false,
         shouldRetryOnError: false,
         // TODO: Add more configuration options as needed:
