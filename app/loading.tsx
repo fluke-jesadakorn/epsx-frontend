@@ -1,7 +1,15 @@
+import { Spin } from 'antd';
+
 const Loading = () => {
   return (
-    <div>
-      <h1>Loading...</h1>
+    <div style={{ 
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh'
+    }}>
+      {/* Removed tip prop as it only works in nest/fullscreen patterns */}
+      <Spin size="large" />
     </div>
   );
 };

@@ -7,9 +7,7 @@ import { Table, Spin, Alert, Row } from "antd";
 import type { TableColumnsType } from "antd";
 import { fetcher } from "@/lib/fetchData";
 import React, { useState } from "react";
-import useSWR, { preload } from "swr";
-
-preload("https://www.investing.com/pro/_/screener-v2/query", fetcher);
+import useSWR, { preload, mutate } from "swr";
 
 const StockRankTable: React.FC = () => {
   const [columns, setColumns] = useState<TableColumnsType<AnyObject>>([]);
@@ -20,8 +18,9 @@ const StockRankTable: React.FC = () => {
     { [key: string]: string | number }[]
   >([]);
   const [isPaginationLoading, setIsPaginationLoading] = useState(false);
+
   const { data, error, isLoading } = useSWR<Response, Error>(
-    `https://www.investing.com/pro/_/screener-v2/query?currentPage=${currentPage}`,
+    `https://www.investing.com/pro/_/screener-v2/query?currentPage=${currentPage}&pageSize=${pageSize}`,
     (url) =>
       fetcher({
         url,
@@ -33,25 +32,38 @@ const StockRankTable: React.FC = () => {
           setIsPaginationLoading(true);
           const convertedColumns = createTableColumns(response);
           const convertedRows = createTableData(response);
-          setColumns(convertedColumns);
+          const rowNumberColumn = {
+            title: "No.",
+            dataIndex: "rowNumber",
+            key: "rowNumber",
+            width: 50,
+            fixed: "left" as const,
+            render: (_: string, __: string, index: number) => {
+              return (currentPage - 1) * pageSize + index + 1;
+            },
+          };
+          setColumns([rowNumberColumn, ...convertedColumns]);
           setTableData(convertedRows);
           setTotalRecords(response.page.totalItems || 0);
-          setPageSize(response.page.pageSize || 10);
           setIsPaginationLoading(false);
         }
+      },
+      onError: (err) => {
+        console.error("SWR Error:", err);
+        setIsPaginationLoading(false);
       },
     }
   );
 
   const handlePaginationChange = async (page: number, size: number) => {
-    setIsPaginationLoading(true);
     try {
       setCurrentPage(page);
       setPageSize(size);
+      await mutate(
+        `https://www.investing.com/pro/_/screener-v2/query?currentPage=${page}&pageSize=${size}`
+      );
     } catch (error) {
       console.error("Pagination error:", error);
-    } finally {
-      setIsPaginationLoading(false);
     }
   };
 
@@ -71,7 +83,7 @@ const StockRankTable: React.FC = () => {
   }
 
   return (
-    <Row justify="center" align="middle">
+    <Row justify="center" align="middle" style={{ width: "100%" }}>
       <Table
         style={{ width: "100%" }}
         columns={columns}
@@ -83,6 +95,7 @@ const StockRankTable: React.FC = () => {
           total: totalRecords,
           responsive: true,
           showSizeChanger: true,
+          pageSizeOptions: [10, 20, 50, 100],
           onChange: handlePaginationChange,
         }}
         scroll={{ x: "max-content" }}
@@ -99,4 +112,4 @@ export default StockRankTable;
 // TODO: Consider adding a debounce for rapid page changes
 // TODO: Add validation for pagination parameters
 // TODO: Implement server-side pagination if performance becomes an issue
-// TODO: Add configurable default page size options
+// TODO: Implement persistent user preference storage for page size

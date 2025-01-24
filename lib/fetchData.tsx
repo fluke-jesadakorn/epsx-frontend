@@ -1,5 +1,7 @@
 "use client";
 
+import { SWRConfig } from "swr";
+import useSWR from "swr";
 import type { Query } from "@/types/stockFetchData";
 import { API_HEADERS } from "@/configs/header";
 import { SortDirection, Market, Metrics } from "@/constants/query";
@@ -28,13 +30,13 @@ const initialQuery: Query = {
     Metrics.TOTAL_REV_GROWTH,
     Metrics.TOTAL_REV_CAGR_5Y,
   ],
-  page: { skip: 0, limit: 30 },
+  page: { skip: 0, limit: 10 },
 };
 
-export const fetcher = ({
+export const fetcher = async ({
   url = "https://www.investing.com/pro/_/screener-v2/query",
   query = initialQuery,
-  page = { skip: 0, limit: 30 },
+  page = { skip: 0, limit: 10 },
 }: {
   url: string;
   query?: Query;
@@ -46,11 +48,39 @@ export const fetcher = ({
     method: "POST",
     headers: {
       ...API_HEADERS,
-      "accept-language": "th-TH,th;q=0.9,en;q=0.8",
-      "x-requested-with": "investing-client/22c96aa",
-      Referer:
-        "https://www.investing.com/stock-screener?ssid=v2%24eyJrZXlzIjpbImNvbm5lY3RpdmUiLCJmaWx0ZXJzLjAuZ3QuaW5jbHVzaXZlIiwiZmlsdGVycy4wLmd0LnNjYWxlIiwiZmlsdGVycy4wLmd0LnZhbHVlIiwiZmlsdGVycy4wLm1ldHJpYyIsImxpbWl0IiwicHJlZmlsdGVycy5tYXJrZXQiLCJwcmVmaWx0ZXJzLnByaW1hcnlPbmx5Iiwic29ydC5kaXJlY3Rpb24iLCJzb3J0Lm1ldHJpYyJdLCJ2YWx1ZXMiOlsiQUxMIix0cnVlLDEsMSwiZXBzX2RpbHV0ZWRfcXRyX2dyb3d0aCIsMzAsIlVTIix0cnVlLCJERVNDIiwiYW5hbHlzdF90YXJnZXRfdXBzaWRlIl19",
+      "accept-language": "en-US,en;q=0.9",
+      "x-requested-with": "investing-client/0910922",
     },
     body: JSON.stringify(optionsQuery),
   }).then((res) => res.json());
+};
+
+// SWR Provider for data fetching with caching and revalidation
+export const SWRProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <SWRConfig
+      value={{
+        fetcher,
+        revalidateOnFocus: false,
+        shouldRetryOnError: false,
+        // TODO: Add more configuration options as needed:
+        // - refreshInterval for periodic revalidation
+        // - dedupingInterval for request deduplication
+        // - error handling and retry logic
+      }}
+    >
+      {children}
+    </SWRConfig>
+  );
+};
+
+// Custom SWR hook wrapper with default options
+export const useSWRFetch = (key: string) => {
+  return useSWR(key, {
+    // Default options for all SWR hooks
+    // TODO: Add more options as needed:
+    // - Custom error handling
+    // - Loading states
+    // - Prefetching
+  });
 };

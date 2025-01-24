@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { ConfigProvider, Row } from "antd";
-import { useThemeStore } from "../lib/store/theme";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { useThemeStore } from "../lib/store/theme";
 import { Layout } from "antd";
 import Navbar from "./Navbar";
 import { unstableSetRender } from "antd";

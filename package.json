@@ -13,17 +13,17 @@
     "deploy": "bun run pages:build && wrangler pages deploy"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.5.2",
+    "@ant-design/icons": "^5.6.0",
     "@ant-design/nextjs-registry": "^1.0.2",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@hookform/resolvers": "^3.10.0",
     "@stripe/react-stripe-js": "^3.1.1",
     "@stripe/stripe-js": "^5.5.0",
     "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.47.12",
+    "@supabase/supabase-js": "^2.48.0",
     "@types/next": "^9.0.0",
-    "antd": "^5.23.1",
-    "lucide-react": "^0.471.1",
+    "antd": "^5.23.2",
+    "lucide-react": "^0.471.2",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -34,14 +34,14 @@
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.7",
-    "@cloudflare/workers-types": "^4.20250109.0",
-    "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@cloudflare/workers-types": "^4.20250121.0",
+    "@eslint/eslintrc": "^3.2.0",
+    "@types/node": "^20.17.15",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "eslint": "^9.18.0",
     "eslint-config-next": "15.1.4",
     "eslint-plugin-next-on-pages": "^1.13.7",
-    "typescript": "^5"
+    "typescript": "^5.7.3"
   }
 }

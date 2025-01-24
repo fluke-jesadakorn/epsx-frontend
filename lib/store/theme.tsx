@@ -5,6 +5,15 @@ import { theme, ThemeConfig } from "antd";
 const lightTheme: ThemeConfig = {
   token: {
     wireframe: true,
+    borderRadius: 16,
+    colorPrimary: "#1fc7d4",
+    colorInfo: "#1fc7d4",
+    colorBgBase: "#ffffff",
+  },
+  components: {
+    Button: {
+      algorithm: true,
+    },
   },
   algorithm: theme.defaultAlgorithm,
 };
@@ -12,6 +21,15 @@ const lightTheme: ThemeConfig = {
 const darkTheme: ThemeConfig = {
   token: {
     wireframe: true,
+    borderRadius: 16,
+    colorPrimary: "#1fc7d4",
+    colorInfo: "#1fc7d4",
+    colorBgBase: "#27262c",
+  },
+  components: {
+    Button: {
+      algorithm: true,
+    },
   },
   algorithm: theme.darkAlgorithm,
 };
@@ -23,22 +41,29 @@ export const ThemeType = {
 
 interface ThemeState {
   theme: ThemeConfig;
+  isDarkMode: boolean;
   setTheme: (theme: ThemeConfig) => void;
+  toggleTheme: () => void;
   initializeTheme: () => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: lightTheme,
+      theme: darkTheme,
+      isDarkMode: true,
       setTheme: (theme) => set({ theme }),
+      toggleTheme: () => set((state) => ({
+        isDarkMode: !state.isDarkMode,
+        theme: state.isDarkMode ? lightTheme : darkTheme
+      })),
       initializeTheme: () => {
         if (typeof window !== "undefined") {
-          const prefersDarkScheme = window.matchMedia(
-            "(prefers-color-scheme: dark)"
-          ).matches;
-          set({ theme: prefersDarkScheme ? darkTheme : lightTheme });
-          // set({ theme:  lightTheme });
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          set({ 
+            theme: prefersDark ? darkTheme : lightTheme,
+            isDarkMode: prefersDark
+          });
         }
       },
     }),

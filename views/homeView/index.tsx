@@ -1,17 +1,24 @@
 "use client";
 
 import StockRankTable from "@/components/StockRankTable";
-import CardSection from "@/views/homeView/CardSection";
+import CardSection from "@/views/components/HeroSection";
+import EpsCardSection from "../components/EpsCardSection";
 import { Col, Row } from "antd";
-import EpsCardSection from "./EpsCardSection";
 
 export default function HomeView() {
   return (
-    <Row style={{ padding: "0 20px" }} justify={"center"}>
+    <Row justify={"center"} align={"middle"}>
       <Col span={20}>
-        <CardSection />
-        <EpsCardSection/>
-        <StockRankTable />
+        <Row
+          gutter={[20, 100]}
+          style={{ margin: 0 }}
+          justify={"center"}
+          align={"middle"}
+        >
+          <CardSection />
+          <EpsCardSection />
+          <StockRankTable />
+        </Row>
       </Col>
     </Row>
   );
