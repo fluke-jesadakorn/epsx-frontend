@@ -3,6 +3,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { hasFeaturePermission } from '@/constants/roles'
+import { apiClient } from '@/lib/api-client'
 
 export async function getRoles(userId?: string) {
   const supabase = createServerComponentClient({ cookies })
@@ -21,12 +22,7 @@ export async function getRoles(userId?: string) {
       }
     }
 
-    const { data: roles, error } = await supabase
-      .from('roles')
-      .select('*')
-      .order('created_at', { ascending: true })
-
-    if (error) throw error
+    const roles = await apiClient.get('/roles')
     return roles
   } catch (error) {
     console.error('Error fetching roles:', error)
@@ -52,13 +48,7 @@ export async function createRole(roleData: {
       throw new Error('Forbidden')
     }
 
-    const { data: newRole, error } = await supabase
-      .from('roles')
-      .insert(roleData)
-      .select()
-      .single()
-
-    if (error) throw error
+    const newRole = await apiClient.post('/roles', roleData)
     return newRole
   } catch (error) {
     console.error('Error creating role:', error)
@@ -85,14 +75,7 @@ export async function updateRole(roleData: {
       throw new Error('Forbidden')
     }
 
-    const { data: updatedRole, error } = await supabase
-      .from('roles')
-      .update(roleData)
-      .eq('id', roleData.id)
-      .select()
-      .single()
-
-    if (error) throw error
+    const updatedRole = await apiClient.put(`/roles/${roleData.id}`, roleData)
     return updatedRole
   } catch (error) {
     console.error('Error updating role:', error)
@@ -115,12 +98,7 @@ export async function deleteRole(roleId: string, userId: string) {
       throw new Error('Forbidden')
     }
 
-    const { error } = await supabase
-      .from('roles')
-      .delete()
-      .eq('id', roleId)
-
-    if (error) throw error
+    await apiClient.delete(`/roles/${roleId}`)
     return true
   } catch (error) {
     console.error('Error deleting role:', error)
@@ -132,14 +110,7 @@ export async function assignRoles(userId: string, roles: string[]) {
   const supabase = createServerComponentClient({ cookies })
   
   try {
-    await supabase.from('user_roles').delete().eq('user_id', userId)
-    const { error } = await supabase.from('user_roles').insert(
-      roles.map(roleId => ({
-        user_id: userId,
-        role_id: roleId
-      }))
-    )
-    if (error) throw error
+    await apiClient.post(`/users/${userId}/roles`, { roles })
     return true
   } catch (error) {
     console.error('Error assigning roles:', error)
@@ -151,14 +122,7 @@ export async function updateStockVisibility(stockId: string, roles: string[]) {
   const supabase = createServerComponentClient({ cookies })
   
   try {
-    await supabase.from('stock_visibility').delete().eq('stock_id', stockId)
-    const { error } = await supabase.from('stock_visibility').insert(
-      roles.map(roleId => ({
-        stock_id: stockId,
-        role_id: roleId
-      }))
-    )
-    if (error) throw error
+    await apiClient.put(`/stocks/${stockId}/visibility`, { roles })
     return true
   } catch (error) {
     console.error('Error updating stock visibility:', error)

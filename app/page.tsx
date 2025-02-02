@@ -1,6 +1,6 @@
 import HomeView from "@/app/home/page";
 
-export default function Home() {
+export default async function Home() {
   return <HomeView />;
 }
 
