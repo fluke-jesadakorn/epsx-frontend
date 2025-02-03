@@ -1,5 +1,6 @@
 import { Menu, Switch, ConfigProvider, Flex, Button } from "antd";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   HomeOutlined,
   LineChartOutlined,
@@ -31,12 +32,13 @@ const items = [
 
 export default function Navbar() {
   const { theme, isDarkMode, toggleTheme } = useThemeStore();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     try {
       await logout();
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
       // TODO: Show error notification to user
     }
   };
@@ -47,15 +49,22 @@ export default function Navbar() {
         <Menu
           mode="horizontal"
           items={items}
+          selectedKeys={[pathname === "/" ? "home" : pathname.split("/")[1]]}
           style={{
             justifyContent: "center",
             borderBottom: "none",
-            backgroundColor: "transparent",
             padding: "0 24px",
+            background: "transparent",
           }}
-          theme={isDarkMode ? "dark" : "light"}
         />
         <Flex gap={8}>
+          <Switch
+            checked={isDarkMode}
+            onChange={toggleTheme}
+            checkedChildren={<MoonOutlined />}
+            unCheckedChildren={<SunOutlined />}
+            style={{ marginTop: 6 }}
+          />
           <Button
             type="text"
             icon={<LogoutOutlined />}
@@ -64,12 +73,6 @@ export default function Navbar() {
           >
             Logout
           </Button>
-          <Switch
-            checked={isDarkMode}
-            onChange={toggleTheme}
-            checkedChildren={<MoonOutlined />}
-            unCheckedChildren={<SunOutlined />}
-          />
         </Flex>
       </Flex>
     </ConfigProvider>

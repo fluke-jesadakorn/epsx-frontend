@@ -1,26 +1,11 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// Bot protection middleware
-export function middleware(request: NextRequest) {
-  const userAgent = request.headers.get('user-agent') || ''
-  const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent)
-  
-  // Restrict bot access to only root path
-  if (isBot && request.nextUrl.pathname !== '/') {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
-
-  // Add security headers
-  const response = NextResponse.next()
-  response.headers.set('X-Bot-Protection', 'active')
-  
-  // TODO: Add rate limiting for bots
-  // TODO: Implement bot challenge system
-  // TODO: Add bot logging for analytics
-  
-  return response
-}
+// // Bot protection middleware
+// export function middleware(request: NextRequest) {
+//   const response = NextResponse.next();
+//   return response;
+// }
 
 export const config = {
   matcher: [
@@ -31,6 +16,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
-}
+};

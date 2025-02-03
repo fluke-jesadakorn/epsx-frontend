@@ -1,5 +1,4 @@
 import "@ant-design/v5-patch-for-react-19";
-import { SWRProvider } from "@/lib/fetchData";
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import { ErrorProvider } from "@/contexts/ErrorContext";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -44,13 +43,7 @@ export default function RootLayout({
     >
       <body style={{ minHeight: "100vh" }}>
         {/* TODO: Consider adding a loading skeleton for initial render */}
-        <AntdRegistryProvider>
-          <LoadingProvider>
-            <ErrorProvider>
-              <SWRProvider>{children}</SWRProvider>
-            </ErrorProvider>
-          </LoadingProvider>
-        </AntdRegistryProvider>
+        <AntdRegistryProvider>{children}</AntdRegistryProvider>
       </body>
     </html>
   );

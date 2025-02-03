@@ -14,6 +14,9 @@ const lightTheme: ThemeConfig = {
     Button: {
       algorithm: true,
     },
+    // Menu: {
+    //   colorPrimaryActive: "#ffffff",
+    // },
   },
   algorithm: theme.defaultAlgorithm,
 };
@@ -25,12 +28,14 @@ const darkTheme: ThemeConfig = {
     colorPrimary: "#1fc7d4",
     colorInfo: "#1fc7d4",
     colorBgBase: "#27262c",
-    colorTextBase: "#ffffff",
   },
   components: {
     Button: {
       algorithm: true,
     },
+    // Menu: {
+    //   colorPrimaryActive: "#ffffff",
+    // },
   },
   algorithm: theme.darkAlgorithm,
 };
@@ -54,16 +59,19 @@ export const useThemeStore = create<ThemeState>()(
       theme: darkTheme,
       isDarkMode: true,
       setTheme: (theme) => set({ theme }),
-      toggleTheme: () => set((state) => ({
-        isDarkMode: !state.isDarkMode,
-        theme: state.isDarkMode ? lightTheme : darkTheme
-      })),
+toggleTheme: () =>
+  set((state) => ({
+    isDarkMode: !state.isDarkMode,
+    theme: !state.isDarkMode ? lightTheme : darkTheme,
+  })),
       initializeTheme: () => {
         if (typeof window !== "undefined") {
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          set({ 
+          const prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          set({
             theme: prefersDark ? darkTheme : lightTheme,
-            isDarkMode: prefersDark
+            isDarkMode: prefersDark,
           });
         }
       },

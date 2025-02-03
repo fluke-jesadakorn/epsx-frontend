@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/utils/supabase/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { hasFeaturePermission, defaultRoles } from "@/constants/roles";
+import { createClient } from "@supabase/supabase-js";
 
 const publicRoutes = [
   "/",
@@ -11,7 +13,47 @@ const publicRoutes = [
   "/coming-soon",
 ];
 
+// Initialize roles on first run
+async function initializeRoles() {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  try {
+    // Check if roles already exist
+    const { data: existingRoles } = await supabase
+      .from("roles")
+      .select("id")
+      .in(
+        "id",
+        defaultRoles.map((role) => role.id)
+      );
+
+    if (!existingRoles || existingRoles.length === 0) {
+      // Insert default roles without permissions
+      const { error } = await supabase
+        .from("roles")
+        .insert(defaultRoles.map(({ permissions, ...role }) => role));
+
+      if (error) throw error;
+      console.log("Default roles initialized successfully");
+    }
+  } catch (error) {
+    console.error("Error initializing roles:", error);
+  }
+}
+
+// Run role initialization on first middleware call
+let rolesInitialized = false;
+
 export async function middleware(req: NextRequest) {
+  // Initialize roles on first run
+  if (!rolesInitialized) {
+    await initializeRoles();
+    rolesInitialized = true;
+  }
+
   const url = req.nextUrl.pathname;
 
   // Redirect only main application routes to coming soon page in development mode
@@ -27,41 +69,90 @@ export async function middleware(req: NextRequest) {
     return NextResponse.rewrite(new URL("/coming-soon", req.url));
   }
 
-  const supabase = await createServerClient();
+
+  // Create Supabase client with cookie handling
+  let response = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            req.cookies.set(name, value)
+          );
+          response = NextResponse.next({
+            request: req,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  // Debug logging for development
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Middleware] Processing request for: ${url}`);
+  }
 
   try {
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    // Log authentication state for debugging
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Middleware] Auth state:`, {
+        authenticated: !!user,
+        error: authError?.message,
+      });
+    }
 
     // Allow public routes without session
     if (publicRoutes.includes(url)) {
-      // If user is logged in and tries to access auth pages, redirect to home
-      if (
-        session &&
-        (url.startsWith("/login") || url.startsWith("/register"))
-      ) {
+      if (user && (url.startsWith("/login") || url.startsWith("/register"))) {
         return NextResponse.redirect(new URL("/", req.url));
       }
       return NextResponse.next();
     }
 
-    // Require session for protected routes
-    if (!session) {
-      // Store the requested URL for redirect after login
+    // Require authenticated user for protected routes
+    if (authError || !user) {
       const redirectUrl = req.nextUrl.pathname + req.nextUrl.search;
       return NextResponse.redirect(
         new URL(`/login?redirect=${encodeURIComponent(redirectUrl)}`, req.url)
       );
     }
 
-    // Refresh session if needed
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-    if (userError || !user) {
-      return NextResponse.redirect(new URL("/login", req.url));
+    // Get user's role from metadata
+    const userRoleId = user.user_metadata?.role;
+    const userRole = defaultRoles.find((role) => role.id === userRoleId);
+
+    // Check feature permissions for the requested route
+    const routePermission = Object.entries(featurePermissionsMap).find(
+      ([route]) => url.startsWith(route)
+    )?.[1];
+
+    if (
+      routePermission &&
+      !hasFeaturePermission(
+        userRole,
+        routePermission.feature,
+        routePermission.permission
+      )
+    ) {
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
     return NextResponse.next();
@@ -75,8 +166,26 @@ export const config = {
   matcher: "/((?!api|_next|static|favicon.ico).*)",
 };
 
+// Map routes to required features and permissions
+const featurePermissionsMap: Record<
+  string,
+  { feature: string; permission: "read" | "write" | "manage" }
+> = {
+  "/admin": { feature: "settings", permission: "manage" },
+  "/settings": { feature: "settings", permission: "read" },
+  "/developer": { feature: "settings", permission: "manage" },
+  "/services": { feature: "services", permission: "read" },
+  "/ranking": { feature: "projects", permission: "read" },
+  "/news": { feature: "projects", permission: "read" },
+};
+
 // TODO: Add more sophisticated route protection
 // For future features:
-// - Role-based access control
-// - Session expiration handling
-// - Rate limiting
+// - Implement hierarchical role-based access control with inheritance
+// - Add session expiration handling with automatic token refresh
+// - Implement rate limiting based on IP and user ID
+// - Add CSRF protection for sensitive operations
+// - Implement audit logging for security events
+// - Add support for multi-factor authentication
+// - Implement content security policy (CSP) headers
+// - Add brute force protection for authentication endpoints
