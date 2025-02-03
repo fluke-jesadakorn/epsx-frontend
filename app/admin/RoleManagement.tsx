@@ -35,8 +35,6 @@ export default function RoleManagement() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const roles = await getRoles()
-        setRoles(roles)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch roles')
       }
@@ -44,14 +42,6 @@ export default function RoleManagement() {
     fetchData()
   }, [])
 
-  const handleCreateRole = async (values: Role) => {
-    try {
-      const newRole = await createRole(values, 'current-user-id') // TODO: Replace with actual user ID
-      setRoles([...roles, newRole])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create role')
-    }
-  }
 
   const handleAssignRoles = async (userId: string, roles: string[]) => {
     try {
