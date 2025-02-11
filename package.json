@@ -13,37 +13,39 @@
     "deploy": "bun run pages:build && wrangler pages deploy"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.6.0",
+    "@ant-design/icons": "^5.6.1",
     "@ant-design/nextjs-registry": "^1.0.2",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^3.10.0",
     "@stripe/react-stripe-js": "^3.1.1",
-    "@stripe/stripe-js": "^5.5.0",
+    "@stripe/stripe-js": "^5.6.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.48.0",
-    "antd": "^5.23.2",
+    "@supabase/supabase-js": "^2.48.1",
+    "antd": "^5.23.4",
     "lucide-react": "^0.474.0",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-error-boundary": "^5.0.0",
     "react-hook-form": "^7.54.2",
-    "stripe": "^17.5.0",
-    "swr": "^2.3.0",
+    "stripe": "^17.6.0",
+    "swr": "^2.3.2",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.7",
-    "@cloudflare/workers-types": "^4.20240208.0",
+    "@cloudflare/workers-types": "^4.20250204.0",
     "@eslint/eslintrc": "^3.2.0",
-    "@types/node": "^22.10.10",
+    "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "eslint": "^8.57.1",
     "eslint-config-next": "15.1.6",
     "eslint-plugin-next-on-pages": "^1.13.7",
     "typescript": "^5.7.3",
-    "wrangler": "^3.105.0"
+    "wrangler": "^3.107.3"
   }
 }

@@ -1,9 +1,8 @@
 import "@ant-design/v5-patch-for-react-19";
-import { LoadingProvider } from "@/contexts/LoadingContext";
-import { ErrorProvider } from "@/contexts/ErrorContext";
 import { Geist, Geist_Mono } from "next/font/google";
 import AntdRegistryProvider from "@/components/layout/AntdRegistry";
 import type { Metadata } from "next";
+import EmotionRegistry from "@/app/components/EmotionRegistry";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -43,7 +42,9 @@ export default function RootLayout({
     >
       <body style={{ minHeight: "100vh" }}>
         {/* TODO: Consider adding a loading skeleton for initial render */}
-        <AntdRegistryProvider>{children}</AntdRegistryProvider>
+        <AntdRegistryProvider>
+          <EmotionRegistry>{children}</EmotionRegistry>
+        </AntdRegistryProvider>
       </body>
     </html>
   );

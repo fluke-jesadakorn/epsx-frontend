@@ -18,38 +18,40 @@
  * - Add request retries with exponential backoff
  */
 
-// Types for EPS Growth Ranking
-interface EpsGrowthData {
-  current: {
-    symbol: string;
-    companyName: string;
-    eps: number;
-    epsGrowthPercent: number;
-    reportDate: string;
-  };
-  previous: {
-    symbol: string;
-    companyName: string;
-    eps: number;
-    epsGrowthPercent: number;
-    reportDate: string;
-  };
-}
+import { EpsGrowthRankingResponse, EpsGrowthData } from "@/types/epsGrowthRanking";
 
+/**
+ * Fetches EPS growth ranking data from the API
+ *
+ * @param params - Query parameters for pagination
+ * @param params.limit - Number of records to return (default: 20)
+ * @param params.skip - Number of records to skip (default: 0)
+ *
+ * Future Considerations:
+ * - Add market filter support (e.g., filter by TYO, BOM, OTC)
+ * - Add date range filter for last_report_date
+ * - Add minimum/maximum EPS filter
+ * - Add sorting options (e.g., by eps, eps_growth, company_name)
+ * - Add company search functionality
+ * - Implement data caching with configurable TTL
+ * - Add market cap and sector filters
+ * - Consider adding data export functionality (CSV, Excel)
+ *
+ * @returns Promise<EpsGrowthRankingResponse>
+ */
 export async function fetchEpsGrowthRanking({
-  limit = 10,
+  limit = 3,
   skip = 0,
 }: {
   limit?: number;
   skip?: number;
-}): Promise<{ data: EpsGrowthData[]; total: number }> {
+}): Promise<EpsGrowthRankingResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   if (!baseUrl) {
-    console.error(
+    throw new Error(
       "NEXT_PUBLIC_API_URL is not defined in environment variables"
     );
-    return { data: [], total: 0 };
   }
 
   try {
@@ -57,76 +59,14 @@ export async function fetchEpsGrowthRanking({
       `${baseUrl}/financial/eps-growth-ranking?limit=${limit}&skip=${skip}`,
       {
         method: "GET",
-        credentials: "include",
-      }
-    );
-
-    const data = await response.json();
-
-    if (!data || typeof data !== "object") {
-      console.error("API returned invalid data:", data);
-      return { data: [], total: 0 };
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch EPS growth ranking:", error);
-    return { data: [], total: 0 };
-  }
-}
-
-// Types for Stock Ranking
-export interface StockRankingData {
-  columns: Array<{
-    label: string;
-    metric: string;
-  }>;
-  rows: Array<{
-    asset: {
-      ticker: string;
-    };
-    data: Array<{
-      value: string | number;
-    }>;
-  }>;
-  page: {
-    total: number;
-    current: number;
-    size: number;
-  };
-}
-
-// Fetch stock ranking data
-export async function fetchStockRanking({
-  limit = 10,
-  skip = 0,
-}: {
-  limit?: number;
-  skip?: number;
-}): Promise<StockRankingData> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  if (!baseUrl) {
-    console.error(
-      "NEXT_PUBLIC_API_URL is not defined in environment variables"
-    );
-    return {
-      columns: [],
-      rows: [],
-      page: {
-        total: 0,
-        current: 1,
-        size: limit,
-      },
-    };
-  }
-
-  try {
-    const response = await fetch(
-      `${baseUrl}/financial/eps-growth-ranking?limit=${limit}&skip=${skip}`,
-      {
-        method: "GET",
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0",
+          "X-Source": "Cloudflare-Workers",
+        },
+        next: {
+          revalidate: 300, // Cache for 5 minutes
+        },
       }
     );
 
@@ -134,39 +74,54 @@ export async function fetchStockRanking({
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const rawData = await response.json();
+    const data = await response.json();
 
-    // Transform the data to match our interface
-    const transformedData: StockRankingData = {
-      columns: rawData.columns.map((col: any) => ({
-        label: col.name || col.label,
-        metric: col.id || col.metric,
-      })),
-      rows: rawData.rows.map((row: any) => ({
-        asset: {
-          ticker: row.symbol || row.ticker,
-        },
-        data: Object.entries(row).map(([_, value]) => ({
-          value: value,
-        })),
-      })),
-      page: {
-        total: rawData.page?.total || rawData.total || 0,
-        current: rawData.page?.current || skip / limit + 1,
-        size: rawData.page?.size || limit,
-      },
-    };
+    // Validate response structure and data
+    if (!data?.data || !Array.isArray(data.data)) {
+      throw new Error("Invalid API response structure: missing or invalid data array");
+    }
 
-    return transformedData;
-  } catch (error) {
-    console.error("Failed to fetch stock ranking:", error);
+    if (!data?.metadata) {
+      console.warn("Missing metadata in API response, using default values");
+      data.metadata = {
+        skip,
+        total: data.data.length,
+        page: 1,
+        limit,
+        totalPages: Math.ceil(data.data.length / limit),
+      };
+    }
+
+    // Validate each item in the data array
+    const validatedData = data.data.filter((item: unknown): item is EpsGrowthData => 
+      item !== null &&
+      typeof item === 'object' &&
+      'symbol' in item &&
+      'company_name' in item &&
+      typeof (item as EpsGrowthData).symbol === 'string' &&
+      typeof (item as EpsGrowthData).company_name === 'string'
+    );
+
     return {
-      columns: [],
-      rows: [],
-      page: {
+      data: validatedData,
+      metadata: {
+        skip: data.metadata.skip ?? skip,
+        total: data.metadata.total ?? validatedData.length,
+        page: data.metadata.page ?? 1,
+        limit: data.metadata.limit ?? limit,
+        totalPages: data.metadata.totalPages ?? Math.ceil(validatedData.length / limit),
+      }
+    } as EpsGrowthRankingResponse;
+  } catch (error) {
+    console.error("Failed to fetch EPS growth ranking:", error);
+    return {
+      data: [],
+      metadata: {
+        skip,
         total: 0,
-        current: 1,
-        size: limit,
+        page: 1,
+        limit,
+        totalPages: 0,
       },
     };
   }
