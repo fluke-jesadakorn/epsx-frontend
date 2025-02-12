@@ -1,9 +1,14 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { ChatRequest, ChatResponse } from "../types/chat";
+import { ChatRequest, ChatResponse } from "@/types/chat";
 
 type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+// TODO: Implement authentication system
+// Consider options like:
+// - JWT with HttpOnly cookies
+// - NextAuth.js session
+// - OAuth2 tokens
 
 async function fetchWithAuth(
   endpoint: string,
@@ -16,20 +21,14 @@ async function fetchWithAuth(
   }
 
   const url = `${API_URL}${endpoint}`;
-  const supabase = createClientComponentClient();
-
+  
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...customHeaders,
   };
 
-  // Add Supabase session token for authentication
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (session?.access_token) {
-    headers["Authorization"] = `Bearer ${session.access_token}`;
-  }
+  // TODO: Add authentication token to headers
+  // Example: headers["Authorization"] = `Bearer ${getAuthToken()}`;
 
   const options: RequestInit = {
     method,

@@ -1,4 +1,4 @@
-declare module "../../configs/header" {
+declare module "@/configs/header" {
   export const API_HEADERS: {
     'Content-Type': string;
     'Cache-Control': string;

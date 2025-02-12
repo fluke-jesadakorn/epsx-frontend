@@ -7,5 +7,3 @@ const Services = () => {
 };
 
 export default Services;
-
-export const runtime = "edge";

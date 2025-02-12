@@ -1,20 +1,11 @@
 import { Button, Result } from 'antd';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase/server';
-
-export default async function UnauthorizedPage() {
-  const supabase = await createServerClient();
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+export default function UnauthorizedPage() {
+  // TODO: Implement auth check
   // If user is logged in, redirect to home
-  if (user) {
-    redirect('/');
-  }
+  // Example:
+  // const session = await getSession();
+  // if (session) redirect('/');
 
   return (
     <div className="flex items-center justify-center min-h-screen">

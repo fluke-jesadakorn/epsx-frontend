@@ -61,8 +61,6 @@ export async function fetchEpsGrowthRanking({
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "Mozilla/5.0",
-          "X-Source": "Cloudflare-Workers",
         },
         next: {
           revalidate: 300, // Cache for 5 minutes

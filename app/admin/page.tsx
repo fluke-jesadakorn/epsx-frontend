@@ -1,4 +1,4 @@
-import RoleManagement from './RoleManagement'
+import { RoleManagement } from '@/components/admin/RoleManagement'
 
 export default function AdminPage() {
   return (

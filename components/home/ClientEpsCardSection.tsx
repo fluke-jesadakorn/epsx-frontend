@@ -39,7 +39,7 @@ export default function ClientEpsCardSection({
   const [total, setTotal] = useState(initialTotal || 0);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const pageSize = 20;
+  const pageSize = 3;
 
   const handlePageChange = async (page: number) => {
     try {

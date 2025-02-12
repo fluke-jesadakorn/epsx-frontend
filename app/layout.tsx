@@ -2,7 +2,7 @@ import "@ant-design/v5-patch-for-react-19";
 import { Geist, Geist_Mono } from "next/font/google";
 import AntdRegistryProvider from "@/components/layout/AntdRegistry";
 import type { Metadata } from "next";
-import EmotionRegistry from "@/app/components/EmotionRegistry";
+import EmotionRegistry from "@/components/EmotionRegistry";
 import "./globals.css";
 
 const geistSans = Geist({

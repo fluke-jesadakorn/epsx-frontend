@@ -7,4 +7,3 @@ const ManualServices = () => {
 };
 
 export default ManualServices;
-export const runtime = 'edge';

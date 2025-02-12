@@ -9,12 +9,12 @@ import { EpsGrowthRankingResponse } from "@/types/epsGrowthRanking";
 
 interface StockRankTableProps {
   style?: React.CSSProperties;
-  role?: "public" | "free" | "admin";
+  accessLevel?: 1 | 2 | 3; // 1 = basic, 2 = premium, 3 = admin
 }
 
 const StockRankTable: React.FC<StockRankTableProps> = ({
   style,
-  role = "public",
+  accessLevel = 1,
 }) => {
   const [columns, setColumns] = useState<TableColumnsType<AnyObject>>([]);
   const [pageSize, setPageSize] = useState(10);
@@ -226,7 +226,7 @@ export default StockRankTable;
 // - Consider adding a debounce for rapid page changes
 // - Add validation for pagination parameters
 // - Implement persistent user preferences (page size, column order, sorting)
-// - Add role-based access control for advanced features
+// - Add proper access control for advanced features
 // - Add tooltip explanations for metrics
 // - Add performance indicators (green/red) for growth metrics
 // - Consider adding "average sector EPS" comparison

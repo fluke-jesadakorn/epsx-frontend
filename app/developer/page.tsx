@@ -7,4 +7,3 @@ const Developer = () => {
 };
 
 export default Developer;
-export const runtime = 'edge';

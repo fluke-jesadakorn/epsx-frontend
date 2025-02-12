@@ -9,7 +9,7 @@ import {
   SunOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { useThemeStore } from "../lib/store/theme";
+import { useThemeStore } from "@/lib/store/theme";
 import { logout } from "@/app/actions/auth";
 
 const items = [

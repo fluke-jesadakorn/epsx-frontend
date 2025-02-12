@@ -1,7 +1,7 @@
-import StockRankTable from "@/components/StockRankTable";
-import HeroSection from "@/app/components/home/HeroSection";
-import ClientEpsCardSection from "@/app/components/home/ClientEpsCardSection";
-import ChatSection from "@/app/components/home/ChatSection";
+import StockRankTable from "@/components/home/StockRankTable";
+import HeroSection from "@/components/home/HeroSection";
+import ClientEpsCardSection from "@/components/home/ClientEpsCardSection";
+import ChatSection from "@/components/home/ChatSection";
 import { Col, Row } from "antd";
 import { fetchEpsGrowthRanking } from "@/app/actions/stockData";
 import { Suspense } from "react";
@@ -98,5 +98,3 @@ export default async function HomeView() {
     </Row>
   );
 }
-
-export const runtime = "edge";

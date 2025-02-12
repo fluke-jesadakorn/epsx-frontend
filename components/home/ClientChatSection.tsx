@@ -6,12 +6,14 @@ import { SendOutlined, UserOutlined, RobotOutlined } from "@ant-design/icons";
 import { ChatRequest, Message } from "@/types/chat";
 import { chatQuery } from "@/app/actions/chat";
 import styled from "@emotion/styled";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/types/supabase";
-
 const { Content, Footer } = Layout;
-const supabase = createClientComponentClient<Database>();
 const { useToken } = theme;
+
+// TODO: Implement message persistence
+// Consider options:
+// - Local storage for demo
+// - Database integration
+// - Redis for real-time chat
 
 interface StyledProps {
   theme: {
@@ -116,16 +118,7 @@ export default function ClientChatSection() {
     setQuery("");
     setLoading(true);
 
-    // Save user message to Supabase
-    try {
-      await supabase.from("chat_messages").insert({
-        role: "user",
-        content: userMessage.content,
-        timestamp: userMessage.timestamp.toISOString(),
-      });
-    } catch (error) {
-      console.error("Failed to save user message:", error);
-    }
+    // TODO: Save user message to persistent storage
 
     startTransition(async () => {
       try {
@@ -146,16 +139,7 @@ export default function ClientChatSection() {
           timestamp: new Date(),
         };
 
-        // Save assistant message to Supabase
-        try {
-          await supabase.from("chat_messages").insert({
-            role: "assistant",
-            content: assistantMessage.content,
-            timestamp: assistantMessage.timestamp.toISOString(),
-          });
-        } catch (error) {
-          console.error("Failed to save assistant message:", error);
-        }
+        // TODO: Save assistant message to persistent storage
 
         setMessages((prev) => [...prev, assistantMessage]);
       } catch (error) {

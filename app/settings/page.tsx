@@ -6,5 +6,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-export const runtime = 'edge';
