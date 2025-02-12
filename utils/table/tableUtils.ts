@@ -42,12 +42,13 @@ export function createTableColumns(result: ApiResponse) {
 }
 
 /**
- * Creates table data with role-based stock visibility
+ * Creates table data with access level visibility
  * @param result - API response containing stock data
- * @param role - User role from Supabase (1 = public, 2 = free access, 3 = full access)
- * @returns Filtered table data based on user role
+ * @param accessLevel - User access level (1 = basic, 2 = premium, 3 = admin)
+ * @returns Filtered table data based on user access level
+ * TODO: Implement proper access control system
  */
-export function createTableData(result: ApiResponse, role: number) {
+export function createTableData(result: ApiResponse, accessLevel: number = 1) {
   return result.rows
     .map((row: Row, index: number) => {
       const rowData: { [key: string]: string | number } = {
@@ -58,24 +59,25 @@ export function createTableData(result: ApiResponse, role: number) {
       row.data.forEach((dataItem: { value: string | number }, idx: number) => {
         const columnMetric = result.columns[idx]?.metric;
         if (columnMetric) {
-          // Apply role-based visibility rules
+          // Apply access level visibility rules
           if (columnMetric === 'stock_number') {
             const stockNumber = Number(dataItem.value);
             
-            // Level 1 (public): show only stock numbers >= 21
-            if (role === 1 && stockNumber < 21) {
-              rowData[columnMetric] = "Restricted";
-              return;
+            // TODO: Replace with proper access control system
+            // Temporary visibility rules:
+            // Basic users (1): Limited access
+            // Premium users (2): More access
+            // Admin users (3): Full access
+            if (accessLevel === 1 && stockNumber < 21) {
+              rowData[columnMetric] = "Subscribe for access";
+            } else if (accessLevel === 2 && stockNumber < 11) {
+              rowData[columnMetric] = "Premium content";
+            } else {
+              rowData[columnMetric] = dataItem.value || "-";
             }
-            
-            // Level 2 (free access): show only stock numbers >= 11
-            if (role === 2 && stockNumber < 11) {
-              rowData[columnMetric] = "Restricted";
-              return;
-            }
+          } else {
+            rowData[columnMetric] = dataItem.value || "-";
           }
-          
-          rowData[columnMetric] = dataItem.value || "-";
         }
       });
 

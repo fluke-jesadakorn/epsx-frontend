@@ -5,60 +5,38 @@ import { Table, Alert, Row, Skeleton, Tooltip } from "antd";
 import type { TableColumnsType } from "antd";
 import React, { useState, useCallback } from "react";
 import { fetchEpsGrowthRanking } from "@/app/actions/stockData";
-
-interface StockRankResponse {
-  data: Array<{
-    current: {
-      symbol: string;
-      companyName: string;
-      eps: number;
-      epsGrowthPercent: number;
-      reportDate: string;
-    };
-    previous: {
-      symbol: string;
-      companyName: string;
-      eps: number;
-      epsGrowthPercent: number;
-      reportDate: string;
-    };
-  }>;
-  metadata: {
-    total: number;
-    limit: number;
-    skip: number;
-  };
-}
+import { EpsGrowthRankingResponse } from "@/types/epsGrowthRanking";
 
 interface StockRankTableProps {
   style?: React.CSSProperties;
-  role?: "public" | "free" | "admin";
+  accessLevel?: 1 | 2 | 3; // 1 = basic, 2 = premium, 3 = admin
 }
 
 const StockRankTable: React.FC<StockRankTableProps> = ({
   style,
-  role = "public",
+  accessLevel = 1,
 }) => {
   const [columns, setColumns] = useState<TableColumnsType<AnyObject>>([]);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [tableData, setTableData] = useState<{ [key: string]: string | number }[]>([]);
+  const [tableData, setTableData] = useState<
+    { [key: string]: string | number }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<StockRankResponse | null>(null);
+  const [data, setData] = useState<EpsGrowthRankingResponse | null>(null);
 
   // Convert API data to table format
-  const processTableData = useCallback((apiData: StockRankResponse) => {
+  const processTableData = useCallback((apiData: EpsGrowthRankingResponse) => {
     return apiData.data.map((item, index) => ({
       key: index,
-      symbol: item.current.symbol.replace('nse/', ''),
-      companyName: item.current.companyName,
-      currentEps: item.current.eps.toFixed(2),
-      previousEps: item.previous.eps.toFixed(2),
-      epsGrowth: item.current.epsGrowthPercent.toFixed(2),
-      reportDate: new Date(item.current.reportDate).toLocaleDateString(),
-      previousReportDate: new Date(item.previous.reportDate).toLocaleDateString(),
+      symbol: item.symbol,
+      companyName: item.company_name,
+      currentEps: item.eps.toFixed(2),
+      epsGrowth: item.eps_growth.toFixed(2),
+      reportDate: new Date(item.last_report_date).toLocaleDateString(),
+      market: item.market_code,
     }));
   }, []);
 
@@ -66,37 +44,50 @@ const StockRankTable: React.FC<StockRankTableProps> = ({
   const createColumns = useCallback(() => {
     const baseColumns = [
       {
-        title: <Tooltip title="Stock symbol on NSE">Symbol</Tooltip>,
+        title: <Tooltip title="Stock symbol">Symbol</Tooltip>,
         dataIndex: "symbol",
         key: "symbol",
         width: 100,
       },
       {
-        title: <Tooltip title="Full registered name of the company">Company Name</Tooltip>,
+        title: (
+          <Tooltip title="Full registered name of the company">
+            Company Name
+          </Tooltip>
+        ),
         dataIndex: "companyName",
         key: "companyName",
         width: 200,
       },
       {
-        title: <Tooltip title="Latest reported Earnings Per Share">Current EPS</Tooltip>,
+        title: (
+          <Tooltip title="Latest reported Earnings Per Share">
+            Current EPS
+          </Tooltip>
+        ),
         dataIndex: "currentEps",
         key: "currentEps",
         width: 120,
-        sorter: (a: any, b: any) => parseFloat(a.currentEps) - parseFloat(b.currentEps),
+        sorter: (a: any, b: any) =>
+          parseFloat(a.currentEps) - parseFloat(b.currentEps),
       },
       {
-        title: <Tooltip title="Previous period's Earnings Per Share">Previous EPS</Tooltip>,
-        dataIndex: "previousEps",
-        key: "previousEps",
-        width: 120,
-        sorter: (a: any, b: any) => parseFloat(a.previousEps) - parseFloat(b.previousEps),
+        title: <Tooltip title="Stock market code">Market</Tooltip>,
+        dataIndex: "market",
+        key: "market",
+        width: 100,
       },
       {
-        title: <Tooltip title="Percentage change in EPS from previous to current period">EPS Growth (%)</Tooltip>,
+        title: (
+          <Tooltip title="Percentage change in EPS from previous to current period">
+            EPS Growth (%)
+          </Tooltip>
+        ),
         dataIndex: "epsGrowth",
         key: "epsGrowth",
         width: 150,
-        sorter: (a: any, b: any) => parseFloat(a.epsGrowth) - parseFloat(b.epsGrowth),
+        sorter: (a: any, b: any) =>
+          parseFloat(a.epsGrowth) - parseFloat(b.epsGrowth),
         render: (value: string) => {
           const numValue = parseFloat(value);
           return (
@@ -108,15 +99,11 @@ const StockRankTable: React.FC<StockRankTableProps> = ({
         },
       },
       {
-        title: <Tooltip title="Date of latest earnings report">Report Date</Tooltip>,
+        title: (
+          <Tooltip title="Date of latest earnings report">Report Date</Tooltip>
+        ),
         dataIndex: "reportDate",
         key: "reportDate",
-        width: 120,
-      },
-      {
-        title: <Tooltip title="Date of previous earnings report">Previous Report</Tooltip>,
-        dataIndex: "previousReportDate",
-        key: "previousReportDate",
         width: 120,
       },
     ];
@@ -143,25 +130,15 @@ const StockRankTable: React.FC<StockRankTableProps> = ({
         skip: (currentPage - 1) * pageSize,
         limit: pageSize,
       });
-      
-      // Convert to our component's expected format
-      const formattedResponse: StockRankResponse = {
-        data: response.data,
-        metadata: {
-          total: response.total,
-          limit: pageSize,
-          skip: (currentPage - 1) * pageSize
-        }
-      };
 
-      setData(formattedResponse);
-      const processedData = processTableData(formattedResponse);
+      setData(response);
+      const processedData = processTableData(response);
       setColumns(createColumns());
       setTableData(processedData);
-      setTotalRecords(response.total);
+      setTotalRecords(response.metadata.total);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch data'));
+      setError(err instanceof Error ? err : new Error("Failed to fetch data"));
     } finally {
       setIsLoading(false);
     }
@@ -249,7 +226,7 @@ export default StockRankTable;
 // - Consider adding a debounce for rapid page changes
 // - Add validation for pagination parameters
 // - Implement persistent user preferences (page size, column order, sorting)
-// - Add role-based access control for advanced features
+// - Add proper access control for advanced features
 // - Add tooltip explanations for metrics
 // - Add performance indicators (green/red) for growth metrics
 // - Consider adding "average sector EPS" comparison

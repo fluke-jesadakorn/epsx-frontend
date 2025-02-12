@@ -7,5 +7,3 @@ const Web3Settings = () => {
 };
 
 export default Web3Settings;
-
-export const runtime = 'edge';

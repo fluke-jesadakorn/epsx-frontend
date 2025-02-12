@@ -8,8 +8,8 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { supabaseClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+// TODO: Implement payment record storage
 import { Button, Form, Typography, Alert, Skeleton } from "antd";
 // TODO: Add skeleton loading for payment form
 // TODO: Implement progress indicators for payment processing
@@ -27,7 +27,6 @@ const PaymentForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = supabaseClient;
 
   const handleSubmit = async () => {
     if (!stripe || !elements) return;
@@ -47,18 +46,14 @@ const PaymentForm = () => {
         return;
       }
 
-      // Save payment record to Supabase
-      const { error: supabaseError } = await supabase.from("payments").insert({
-        payment_method_id: paymentMethod.id,
-        amount: 1000, // Example amount in cents ($10.00)
-        currency: "thb",
-        status: "succeeded",
-      });
-
-      if (supabaseError) {
-        setError("Failed to save payment record");
-        return;
-      }
+      // TODO: Save payment record to database
+      // Example implementation:
+      // await savePaymentRecord({
+      //   paymentMethodId: paymentMethod.id,
+      //   amount: 1000, // Example amount in cents ($10.00)
+      //   currency: "thb",
+      //   status: "succeeded"
+      // });
 
       router.refresh();
       alert("Payment successful!");
@@ -132,5 +127,3 @@ const PaymentSettings = () => {
 };
 
 export default PaymentSettings;
-
-export const runtime = "edge";

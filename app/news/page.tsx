@@ -7,4 +7,3 @@ const News = () => {
 };
 
 export default News;
-export const runtime = 'edge';
