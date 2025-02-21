@@ -33,10 +33,13 @@ const StockRankTable: React.FC<StockRankTableProps> = ({
       key: index,
       symbol: item.symbol,
       companyName: item.company_name,
-      currentEps: item.eps.toFixed(2),
-      epsGrowth: item.eps_growth.toFixed(2),
-      reportDate: new Date(item.last_report_date).toLocaleDateString(),
+      currentEps: item.eps_diluted?.toFixed(2) ?? 'N/A',
+      previousEps: item.previous_eps_diluted?.toFixed(6) ?? 'N/A',
+      epsGrowth: item.eps_growth ? (item.eps_growth > 999999 ? '>999999' : item.eps_growth.toFixed(2)) : 'N/A',
+      reportDate: new Date(item.report_date).toLocaleDateString(),
       market: item.market_code,
+      quarter: item.quarter,
+      year: item.year
     }));
   }, []);
 
@@ -68,8 +71,14 @@ const StockRankTable: React.FC<StockRankTableProps> = ({
         dataIndex: "currentEps",
         key: "currentEps",
         width: 120,
+        render: (value: string, record: any) => (
+          <Tooltip title={`Previous EPS: ${record.previousEps}`}>
+            <span>{value}</span>
+          </Tooltip>
+        ),
         sorter: (a: any, b: any) =>
-          parseFloat(a.currentEps) - parseFloat(b.currentEps),
+          (a.currentEps === 'N/A' ? -Infinity : parseFloat(a.currentEps)) - 
+          (b.currentEps === 'N/A' ? -Infinity : parseFloat(b.currentEps)),
       },
       {
         title: <Tooltip title="Stock market code">Market</Tooltip>,
@@ -87,8 +96,12 @@ const StockRankTable: React.FC<StockRankTableProps> = ({
         key: "epsGrowth",
         width: 150,
         sorter: (a: any, b: any) =>
-          parseFloat(a.epsGrowth) - parseFloat(b.epsGrowth),
+          (a.epsGrowth === 'N/A' || a.epsGrowth === '>100000' ? -Infinity : parseFloat(a.epsGrowth)) - 
+          (b.epsGrowth === 'N/A' || b.epsGrowth === '>100000' ? -Infinity : parseFloat(b.epsGrowth)),
         render: (value: string) => {
+          if (value === 'N/A' || value === '>100000') {
+            return <span>{value}</span>;
+          }
           const numValue = parseFloat(value);
           return (
             <span style={{ color: numValue >= 0 ? "#52c41a" : "#f5222d" }}>
@@ -100,11 +113,16 @@ const StockRankTable: React.FC<StockRankTableProps> = ({
       },
       {
         title: (
-          <Tooltip title="Date of latest earnings report">Report Date</Tooltip>
+          <Tooltip title="Date of latest earnings report">Period</Tooltip>
         ),
         dataIndex: "reportDate",
         key: "reportDate",
-        width: 120,
+        width: 200,
+        render: (_: string, record: any) => (
+          <span>
+            Q{record.quarter} {record.year} ({new Date(record.reportDate).toLocaleDateString()})
+          </span>
+        ),
       },
     ];
 

@@ -16,7 +16,7 @@ const { Title, Text } = Typography;
 
 /**
  * Client-side EPS card section with pagination
- * 
+ *
  * Future Features:
  * - Add market filter dropdown
  * - Add date range picker for last_report_date
@@ -97,12 +97,19 @@ export default function ClientEpsCardSection({
         {data.map((item, index) => {
           // Skip rendering if item or required properties are missing
           if (!item?.symbol || !item?.company_name) {
-            console.error('Missing required data for item:', item);
+            console.error("Missing required data for item:", item);
             return null;
           }
-          
+
           return (
-            <Col key={item.symbol || index} xs={24} sm={24} md={8} lg={8} xl={8}>
+            <Col
+              key={item.symbol || index}
+              xs={24}
+              sm={24}
+              md={8}
+              lg={8}
+              xl={8}
+            >
               <Card
                 loading={loading}
                 style={{
@@ -111,7 +118,7 @@ export default function ClientEpsCardSection({
                 title={
                   <Flex justify="space-between" align="center">
                     <Text style={{ color: getMarketColor(item.market_code) }}>
-                      {item.market_code || 'N/A'}
+                      {item.market_code || "N/A"}
                     </Text>
                     {index < 3 && (
                       <Text
@@ -125,7 +132,7 @@ export default function ClientEpsCardSection({
                               : "#CD7F32", // Bronze
                         }}
                       >
-                        #{item.rank || (index + 1)}
+                        #{index + 1}
                       </Text>
                     )}
                   </Flex>
@@ -133,20 +140,33 @@ export default function ClientEpsCardSection({
               >
                 <Flex vertical gap="small">
                   <Title level={4} style={{ margin: 0 }}>
-                    {item.company_name || 'Unknown Company'}
+                    {item.company_name || "Unknown Company"}
                   </Title>
-                  <Text>Symbol: {item.symbol || 'N/A'}</Text>
-                  <Text>EPS: {typeof item.eps === 'number' ? item.eps.toFixed(2) : 'N/A'}</Text>
-                  <Text 
-                    style={{ 
-                      color: (item.eps_growth || 0) >= 0 ? "#52c41a" : "#ff4d4f",
-                      fontWeight: "bold"
+                  <Text>Symbol: {item.symbol || "N/A"}</Text>
+                  <Text>
+                    EPS:{" "}
+                    {typeof item.eps_diluted === "number"
+                      ? item.eps_diluted.toFixed(2)
+                      : "N/A"}
+                  </Text>
+                  <Text
+                    style={{
+                      color:
+                        (item.eps_growth || 0) >= 0 ? "#52c41a" : "#ff4d4f",
+                      fontWeight: "bold",
                     }}
                   >
-                    Growth: {typeof item.eps_growth === 'number' ? item.eps_growth.toFixed(2) : '0'}%
+                    Growth:{" "}
+                    {typeof item.eps_growth === "number"
+                      ? item.eps_growth.toFixed(2)
+                      : "0"}
+                    %
                   </Text>
                   <Text type="secondary">
-                    Last Report: {item.last_report_date ? new Date(item.last_report_date).toLocaleDateString() : 'N/A'}
+                    Last Report:{" "}
+                    {item.report_date
+                      ? new Date(item.report_date).toLocaleDateString()
+                      : "N/A"}
                   </Text>
                 </Flex>
               </Card>
@@ -154,16 +174,6 @@ export default function ClientEpsCardSection({
           );
         })}
       </Row>
-      <Flex justify="center" style={{ marginTop: 16 }}>
-        <Pagination
-          current={currentPage}
-          total={total}
-          pageSize={pageSize}
-          onChange={handlePageChange}
-          showSizeChanger={false}
-          disabled={loading}
-        />
-      </Flex>
     </Flex>
   );
 }
