@@ -7,10 +7,12 @@ export interface EpsGrowthData {
   symbol: string;
   company_name: string;
   market_code: string;
-  eps: number;
+  eps_diluted: number;
   eps_growth: number;
-  rank: number;
-  last_report_date: string;
+  previous_eps_diluted: number;
+  report_date: string;
+  quarter: number;
+  year: number;
 }
 
 export interface Metadata {

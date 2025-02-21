@@ -56,7 +56,7 @@ export async function fetchEpsGrowthRanking({
 
   try {
     const response = await fetch(
-      `${baseUrl}/financial/eps-growth-ranking?limit=${limit}&skip=${skip}`,
+      `${baseUrl}/financial/eps-growth/ranking?limit=${limit}&skip=${skip}`,
       {
         method: "GET",
         headers: {
@@ -74,52 +74,40 @@ export async function fetchEpsGrowthRanking({
 
     const data = await response.json();
 
-    // Validate response structure and data
-    if (!data?.data || !Array.isArray(data.data)) {
-      throw new Error("Invalid API response structure: missing or invalid data array");
-    }
+    // Transform the response to match expected structure
+    const validatedData = data.data.map((item: any): EpsGrowthData => ({
+      symbol: item.symbol,
+      company_name: item.company_name,
+      market_code: item.market_code,
+      eps_diluted: item.eps_diluted,
+      eps_growth: item.eps_growth,
+      previous_eps_diluted: item.previous_eps_diluted,
+      report_date: item.report_date,
+      quarter: item.quarter,
+      year: item.year
+    }));
 
-    if (!data?.metadata) {
-      console.warn("Missing metadata in API response, using default values");
-      data.metadata = {
-        skip,
-        total: data.data.length,
-        page: 1,
-        limit,
-        totalPages: Math.ceil(data.data.length / limit),
-      };
-    }
-
-    // Validate each item in the data array
-    const validatedData = data.data.filter((item: unknown): item is EpsGrowthData => 
-      item !== null &&
-      typeof item === 'object' &&
-      'symbol' in item &&
-      'company_name' in item &&
-      typeof (item as EpsGrowthData).symbol === 'string' &&
-      typeof (item as EpsGrowthData).company_name === 'string'
-    );
-
+    // Construct response with metadata
     return {
       data: validatedData,
       metadata: {
-        skip: data.metadata.skip ?? skip,
-        total: data.metadata.total ?? validatedData.length,
-        page: data.metadata.page ?? 1,
-        limit: data.metadata.limit ?? limit,
-        totalPages: data.metadata.totalPages ?? Math.ceil(validatedData.length / limit),
+        total: data.metadata.total,
+        page: data.metadata.page,
+        limit: data.metadata.limit,
+        totalPages: data.metadata.totalPages,
+        skip: data.metadata.skip
       }
-    } as EpsGrowthRankingResponse;
+    };
   } catch (error) {
     console.error("Failed to fetch EPS growth ranking:", error);
     return {
       data: [],
       metadata: {
-        skip,
         total: 0,
         page: 1,
-        limit,
+        limit: limit,
         totalPages: 0,
+        skip: skip
       },
     };
   }
